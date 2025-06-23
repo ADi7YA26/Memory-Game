@@ -1,7 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-    --color-primary: hsl(25°, 100%, 50%);
+    --color-primary: hsl(25, 100%, 50%);
     --color-background-primary: hsl(209, 31%, 21%);
+    --color-background-dark: hsl(209, 31%, 17%);
     --color-white: hsl(240, 20%, 97%);
+}
+
+@layer components{
+    .card{
+        @apply relative w-full transform-3d aspect-square select-none transition-transform duration-150 cursor-pointer;
+    }
+
+    .card-front, .card-back{
+        @apply absolute top-0 left-0 text-background-primary w-full h-full rounded-xl flex items-center justify-center text-6xl font-extrabold md:text-8xl backface-hidden;
+    }
+    .card-back{
+        @apply text-white border border-orange-200 bg-gradient-to-b from-orange-400 to-orange-700
+    }
+    .card-front{
+        @apply bg-white rotate-y-180;
+    }
+    .card.flip{
+        @apply rotate-y-180 
+    }
+    .card.matched .card-front{
+        @apply bg-green-300
+    }
+
+    .btn-primary{
+        @apply bg-primary text-white rounded-md font-bold py-2 px-8 active:bg-orange-600 hover:bg-orange-600 cursor-pointer
+    }
 }
