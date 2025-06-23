@@ -1,0 +1,16 @@
+{
+  "name": "memory-game",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx @tailwindcss/cli -i ./tailwind.css -o ./style.css --watch"
+  },
+  "keywords": [],
+  "author": "Aditya",
+  "license": "MIT",
+  "description": "Memory game built using vanilla JS.",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.10",
+    "tailwindcss": "^4.1.10"
+  }
+}
