@@ -11,7 +11,6 @@
     .card{
         @apply relative w-full transform-3d aspect-square select-none transition-transform duration-150 cursor-pointer;
     }
-
     .card-front, .card-back{
         @apply absolute top-0 left-0 text-background-primary w-full h-full rounded-xl flex items-center justify-center text-6xl font-extrabold md:text-8xl backface-hidden;
     }
@@ -19,16 +18,18 @@
         @apply text-white border border-orange-200 bg-gradient-to-b from-orange-400 to-orange-700
     }
     .card-front{
-        @apply bg-white rotate-y-180;
+        @apply bg-slate-100 rotate-y-180;
     }
     .card.flip{
         @apply rotate-y-180 
     }
     .card.matched .card-front{
-        @apply bg-green-300
+        @apply bg-lime-300 border border-lime-100;
     }
-
     .btn-primary{
         @apply bg-primary text-white rounded-md font-bold py-2 px-8 active:bg-orange-600 hover:bg-orange-600 cursor-pointer
+    }
+    .btn-secondary{
+        @apply border text-white rounded-md font-bold py-2 px-8 active:bg-background-primary hover:bg-background-primary cursor-pointer;
     }
 }
