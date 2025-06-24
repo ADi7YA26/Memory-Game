@@ -1,12 +1,19 @@
 const board = document.getElementById("board")
 const gameWon = document.querySelector('.game-won')
+const timerEle = document.querySelector(".game-detail .time")
+const movesEle = document.querySelector(".game-detail .moves")
+const pauseResumeBtn = document.getElementById("pause-game")
+const newGameBtn = document.getElementById("new-game")
 
 const boardSize = 4
 const cardSymbols = ['🦁', '🐯', '🐼', '🐒', '🦊', '🦓', '🦉', '🐧', '🦢', '🐘'];
 const cards = Array.from({length: boardSize*boardSize}, (_, i) => Math.floor(i/2))
 let isCardFlipped
 let remainingPairs = (boardSize*boardSize)/2
-let isFirstFlip, gameLocked, firstCard
+let isFirstFlip, gameLocked, firstCard, moves, isGamePaused
+let timerId
+
+let timer = 0
 
 const cardState = Object.fromEntries(
   Array.from({ length: boardSize * boardSize }, (_, i) => [
@@ -63,7 +70,22 @@ function newGame(){
         const card = createCard(i)
         board.appendChild(card)
     }
+
+    moves = 0
+    timer = 0
+    if(timerId) clearInterval(timerId)
+    updateMoves()
+    startTimer()
+
+    pauseResumeBtn.hidden = false
+    isGamePaused = false
+    pauseResumeBtn.textContent = "Pause"
 }
+
+
+newGameBtn.addEventListener('click', newGame)
+
+pauseResumeBtn.addEventListener('click', pauseGame)
 
 board.addEventListener('click', (e)=>{ 
     const card = e.target.closest('.card')
@@ -80,6 +102,8 @@ board.addEventListener('click', (e)=>{
         isFirstFlip = false
 
     }else{
+        moves++
+        updateMoves()
         gameLocked = true
         const firstCardId = firstCard.dataset.cardId
         const cardMatched = cards[firstCardId] === cards[cardId]
@@ -103,9 +127,9 @@ board.addEventListener('click', (e)=>{
                 card.classList.remove('flip')
                 isCardFlipped[firstCardId] = false
                 isCardFlipped[cardId] = false
-                // to avoid data expose
-                cardFront.innerText = ""
-                firstCard.lastElementChild.textContent = ""
+                // empty the card content to avoid data expose
+                firstCard.querySelector('.card-front').innerText = ""
+                card.querySelector('.card-front').innerText = ""
                 // reset game state
                 isFirstFlip = true
                 gameLocked = false
@@ -114,14 +138,61 @@ board.addEventListener('click', (e)=>{
     }
 })
 
+document.addEventListener("visibilitychange", () => {
+    if (!isGamePaused && !gameLocked && remainingPairs > 0) {
+        pauseGame();
+    }
+});
+
+
 function handleGameWon(){
+    clearInterval(timerId)
+    isGamePaused = true
+    gameLocked = true
+    pauseResumeBtn.hidden = true;
     setTimeout(() => {
-        board.classList.remove("invisible")
+        board.classList.add("invisible")
         gameWon.classList.remove('hidden')
         gameWon.classList.add('flex')
     }, 1000)
 }
 
 newGame()
+pauseGame()
+pauseResumeBtn.hidden = true
 
 // console.log(cards)
+
+
+// ------------timer------------
+function updateTimer(){
+    const minuteDisplay = String(Math.floor(timer/60)).padStart(2,"0")
+    const secondDisplay = String(timer%60).padStart(2,"0")
+
+    timerEle.innerText = `${minuteDisplay}:${secondDisplay}`
+}
+
+function startTimer(){
+    timerId = setInterval(()=> {
+        timer++;
+        updateTimer()
+    }, 1000)
+}
+
+function pauseGame(){
+    if (!isGamePaused) {
+        isGamePaused = true
+        gameLocked = true
+        clearInterval(timerId)
+        pauseResumeBtn.textContent = "Resume"
+    } else {
+        isGamePaused = false
+        gameLocked = false
+        startTimer()
+        pauseResumeBtn.textContent = "Pause"
+    }
+}
+
+function updateMoves(){
+    movesEle.innerText = moves
+}
